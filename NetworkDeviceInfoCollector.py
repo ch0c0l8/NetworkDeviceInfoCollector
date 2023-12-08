@@ -216,6 +216,9 @@ def main():
         if 'handreamnet' in connection_info['device_type']:
             connection_info['device_type'] = 'generic' if connection_info['device_type'] == 'handreamnet' else connection_info['device_type']
             connection = handreamnet_switch(connection_info).connect_to_switch()
+            if connection is None:
+                print(f"{connection_info['ip']}: 연결 실패")
+                continue
             formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y")
             connection.send_command_timing(formatted_time)
             print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
@@ -267,6 +270,9 @@ def main():
         # 아루바
         elif 'aruba_os' in connection_info['device_type']:
             connection = aruba_switch(connection_info).connect_to_switch()
+            if connection is None:
+                print(f"{connection_info['ip']}: 연결 실패")
+                continue
             formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y") # 수정필요
             connection.send_command_timing(formatted_time)
             print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
