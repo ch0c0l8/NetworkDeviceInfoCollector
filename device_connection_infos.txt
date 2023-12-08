@@ -1,0 +1,2 @@
+handreamnet,8.8.8.8,22,Username,password,enable_password
+aruba_os,8.8.8.8,22,Username,password,enable_password
