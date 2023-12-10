@@ -30,9 +30,12 @@ aruba_os,192.168.1.2,22,admin,password,enable_password
 2. 스크립트를 실행하면 각 장치에 연결하여 정보를 가져오고 `device_info.xlsx` Excel 파일에 기록합니다.
 3. 연결 확인 및 데이터 검색에 대한 정보는 터미널 출력에서 확인할 수 있습니다.
 
-## 요구 사항
-Python 3.x
-필수 Python 패키지: openpyxl, netmiko
-```plaintext
+## 필요 조건
+- Python 3.x
+- 필요한 Python 라이브러리: `openpyxl`, `netmiko`
+
+## 설치
+필요한 라이브러리를 설치하려면 다음 명령을 실행하세요:
+```bash
 pip install openpyxl netmiko
 ```
