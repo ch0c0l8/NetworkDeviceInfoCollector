@@ -23,10 +23,10 @@ aruba_os,192.168.1.2,22,admin,password,enable_password
 - 정규 표현식을 사용하여 검색된 데이터에서 관련 정보를 추출합니다.
 
 ### 4. 기록 및 백업
-스크립트는 수집된 데이터를 device_info.xlsx Excel 파일에 기록합니다. 또한 구성 파일 및 세션 로그를 위한 백업 폴더를 생성합니다.
+스크립트는 수집된 데이터를 `device_info.xlsx` Excel 파일에 기록합니다. 또한 구성 파일 및 세션 로그를 위한 백업 폴더를 생성합니다.
 
 ## 사용법
-1. device_connection_infos.txt라는 파일에 필요한 연결 세부 정보를 작성합니다.
+1. `device_connection_infos.txt` 파일에 필요한 연결 세부 정보를 작성합니다.
 2. 스크립트를 실행하면 각 장치에 연결하여 정보를 가져오고 `device_info.xlsx` Excel 파일에 기록합니다.
 3. 연결 확인 및 데이터 검색에 대한 정보는 터미널 출력에서 확인할 수 있습니다.
 
