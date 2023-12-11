@@ -1,9 +1,9 @@
-import re
+
 import os
 import datetime
 from openpyxl import load_workbook, Workbook
-
-from netmiko import ConnectHandler
+from vendor.handreamnet import handreamnet_switch
+from vendor.aruba import aruba_switch
 
 """
 향후 추가 기능
@@ -41,147 +41,6 @@ def read_connection_info_from_file(filename="device_connection_infos.txt"):
         print(f"파일 읽기 오류: {e}")
 
     return connection_infos
-
-##################
-# 한드림넷 스위치 #
-##################
-class handreamnet_switch:
-    def __init__(self, deviceConnectionInfo):
-        self.deviceConnectionInfo = deviceConnectionInfo
-
-    def connect_to_switch(self):
-        try:
-            connection = ConnectHandler(**self.deviceConnectionInfo)
-            connection.send_command_timing('enable')
-            connection.send_command_timing(self.deviceConnectionInfo['secret'])
-            connection.send_command_timing('terminal length 0')
-            print(f"{self.deviceConnectionInfo['ip']}: 연결 성공")
-            return connection
-        except Exception as e:
-            print(f"{self.deviceConnectionInfo['ip']}: 연결 실패 - {e}")
-
-    def hostname(self, data):
-        hostname = re.search(r'hostname\s+(\S+)', data)
-        if hostname:
-            return hostname.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 호스트네임 파싱 실패")
-            return
-    
-    def fan_status(self, data):
-        fan_patterns = [
-        r"Fan\s*+is\s*(\w+)",
-        r"System\s*+Fan\s*:\s*(\w+)",
-        r"Status\s*:\s*(\w+)",
-        ]
-        
-        for pattern in fan_patterns:
-            match = re.search(pattern, data)
-            if match:
-                return match.group(1)
-        print(f"{self.deviceConnectionInfo['ip']}: 팬 상태 파싱 실패")
-        return 
-    
-    def temperature(self, data):
-        temperature = re.search(r"M/B\s*Temp\s*:\s*(\d+\.\d+)", data)
-        if temperature:
-            return temperature.group(1)
-        if not temperature:
-            print(f"{self.deviceConnectionInfo['ip']}: 온도 파싱 실패")
-            return 
-    
-    def uptime(self, data):
-        uptime = re.search(r"up\s+(.+?),", data)
-        if uptime:
-            return uptime.group(1)
-        if not uptime:
-            print(f"{self.deviceConnectionInfo['ip']}: 업타임 파싱 실패")
-            return 
-    
-    def cpu_usage(self, data):    
-        cpu_usage = re.search(r"5\s+sec\s+:\s+([\d.]+)", data)
-        if cpu_usage:
-            return cpu_usage.group(1)
-        if not cpu_usage:
-            print(f"{self.deviceConnectionInfo['ip']}: CPU 사용량 파싱 실패")
-            return 
-    
-    def memory_usage(self, data):
-        used_match = re.search(r"Used\s*:\s*(\d+)\s+kB", data)
-        usage_match = re.search(r"Current\s+memory\s+usage\s+:\s+(\d+\.\d+)", data)
-        
-        if used_match:
-            return used_match.group(1)
-        elif usage_match:
-            return usage_match.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 메모리 사용량 파싱 실패")
-            return 
-
-##################
-#  아루바 스위치  #
-##################
-class aruba_switch:
-    def __init__(self, deviceConnectionInfo):
-        self.deviceConnectionInfo = deviceConnectionInfo
-
-    def connect_to_switch(self):
-        try:
-            connection = ConnectHandler(**self.deviceConnectionInfo)
-            connection.send_command_timing('no page')
-            print(f"{self.deviceConnectionInfo['ip']}: 연결 성공")
-            return connection
-        except Exception as e:
-            print(f"{self.deviceConnectionInfo['ip']}: 연결 실패 - {e}")
-
-    def hostname(self, data):
-        hostname = re.search(r'System\s+Name\s+:\s+(.*)', data)
-        if hostname:
-            return hostname.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 호스트네임 파싱 실패")
-            return
-    
-    def fan_status(self, data):
-        fan_status = re.search(r'(\d+\s+/\s+\d+)\s+Fans\s+in\s+Failure\s+State', data)
-        if fan_status:
-            print(f"{self.deviceConnectionInfo['ip']}: 팬 상태 파싱 성공")
-            return  fan_status.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 팬 상태 파싱 실패")
-            return
-    
-    def temperature(self, data):
-        temperature = re.search(r'Chassis\s+(\d+)', data)
-        if temperature:
-            return temperature.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 온도 파싱 실패")
-            return 
-    
-    def uptime(self, data):
-        uptime = re.search(r'Up\s+Time\s+:\s+(\d+\s+days)', data)
-        if uptime:
-            return uptime.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 업타임 파싱 실패")
-            return 
-    
-    def cpu_usage(self, data):    
-        cpu_usage = re.search(r'CPU\s+Util\s+\(%\)\s+:\s+(\d+)', data)
-        if cpu_usage:
-            return cpu_usage.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: CPU 사용량 파싱 실패")
-            return 
-    
-    def memory_usage(self, data):
-        memory_usage = re.search(r'Memory\s+-\s+Total\s+:\s+(.*)', data)
-        if memory_usage:
-            return memory_usage.group(1)
-        else:
-            print(f"{self.deviceConnectionInfo['ip']}: 메모리 사용량 파싱 실패")
-            return 
 
 def main():
     connection_infos = read_connection_info_from_file()

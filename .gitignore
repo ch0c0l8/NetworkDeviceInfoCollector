@@ -1,0 +1,7 @@
+# diretory
+vendor/__pycache__/
+backup/
+session_logs/
+
+# File
+device_info.xlsx
