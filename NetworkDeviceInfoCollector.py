@@ -2,8 +2,9 @@
 import os
 import datetime
 from openpyxl import load_workbook, Workbook
-from vendor.handreamnet import handreamnet_switch
+from vendor.cisco_ios import cisco_ios
 from vendor.aruba import aruba_switch
+from vendor.handreamnet import handreamnet_switch
 
 """
 향후 추가 기능
@@ -11,7 +12,7 @@ from vendor.aruba import aruba_switch
  - 각 모델별 명령어 출력 결과 필요
 2. 월별 log 분석 후 로그인 성공 및 실패 횟수 파싱
  - 각 모델별 로그 명령어 및 로그 출력결과 필요
-3. 아루바 스위치 추가
+3. 아루바 스위치
  - 아루바 스위치 "no page" 명령어 확인 필요
  - clock 관련 명령어 확인 필요
 """
@@ -162,6 +163,57 @@ def main():
             uptime = aruba_switch(connection_info).uptime(information)
             cpu_usage = aruba_switch(connection_info).cpu_usage(information)
             memory_usage = aruba_switch(connection_info).memory_usage(information)
+
+            connection.disconnect()
+
+            ws.append([connection_info['ip'], hostname, fan_status, temperature, uptime, cpu_usage, memory_usage])
+
+            while True:
+                try:
+                    wb.save(excel_file_path)
+                    break
+                except PermissionError:
+                    print("엑셀 파일이 다른 프로그램에서 열려 있습니다. 파일을 닫고 Enter 키를 눌러 계속하세요.")
+                    input()
+        # 시스코 IOS
+        elif 'cisco_ios' in connection_info['device_type']:
+            connection = cisco_ios(connection_info).connect_to_switch()
+            if connection is None:
+                print(f"{connection_info['ip']}: 연결 실패")
+                continue
+            formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y")
+            connection.send_command_timing(formatted_time)
+            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
+
+            running_config = connection.send_command_timing('show running-config')
+            print(f"{connection_info['ip']}: 명령어 입력 - show running-config")
+
+            hostname = handreamnet_switch(connection_info).hostname(running_config)
+            print(f"{connection_info['ip']}: 호스트네임 - {hostname}")
+
+            file_path = os.path.join(backup_directory, f"{connection_info['ip']}_{hostname}.txt")
+            with open(file_path, "w") as file:
+                file.write(running_config)
+                print(f"{connection_info['ip']}: running-config 저장 완료")
+
+            env_all = connection.send_command_timing('show env all')
+            print(f"{connection_info['ip']}: 명령어 입력 - show env all" + '\n' + env_all)
+
+            uptime = connection.send_command_timing('show version | include uptime')
+            print(f"{connection_info['ip']}: 명령어 입력 - show version | include uptime" + '\n' + uptime)
+
+            cpu_usage = connection.send_command_timing('show process cpu | include CPU utilization')
+            print(f"{connection_info['ip']}: 명령어 입력 - show process cpu | include CPU utilization" + '\n' + cpu_usage)
+
+            memory_usage = connection.send_command_timing('show process memory | include Processor Pool')
+            print(f"{connection_info['ip']}: 명령어 입력 - show process memory | include Processor Pool" + '\n' + memory_usage)
+            
+            # 파싱
+            fan_status = cisco_ios(connection_info).fan_status(env_all)
+            temperature = cisco_ios(connection_info).temperature(env_all)
+            uptime = cisco_ios(connection_info).uptime(uptime)
+            cpu_usage = cisco_ios(connection_info).cpu_usage(cpu_usage)
+            memory_usage = cisco_ios(connection_info).memory_usage(memory_usage)
 
             connection.disconnect()
 
