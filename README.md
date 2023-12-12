@@ -15,7 +15,7 @@ handreamnet,192.168.1.1,22,user,password,enable_password
 aruba_os,192.168.1.2,22,user,password,enable_password
 cisco_ios,192.168.1.3,22,user,password,enable_password
 ```
-2. 스크립트 실행: 지정된 장치에 연결하여 정보를 수집하고 device_info.xlsx Excel 파일에 저장합니다.
+2. 스크립트 실행: 지정된 장치에 연결하여 정보를 수집하고 `device_info.xlsx` Excel 파일에 저장합니다.
 
 ## 필요 조건
 - Python 3.x
