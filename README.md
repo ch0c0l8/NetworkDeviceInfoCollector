@@ -1,4 +1,4 @@
-# NetworkDeviceInfoCollector (네트워크 장비 정보 수집기)
+# NetworkDeviceInfoCollector
 
 ## 개요
 이 파이썬 스크립트는 다양한 스위치에 연결하여 관련 정보를 가져오고 데이터를 Excel 파일에 기록하는 네트워크 장비 점검 스크립트입니다.
