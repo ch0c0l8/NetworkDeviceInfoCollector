@@ -2,9 +2,9 @@
 import os
 import datetime
 from openpyxl import load_workbook, Workbook
-from vendor.cisco_ios import cisco_ios
 from vendor.aruba import aruba_switch
 from vendor.handreamnet import handreamnet_switch
+from vendor.cisco_ios import cisco_ios
 
 """
 향후 추가 기능
@@ -80,8 +80,8 @@ def main():
                 print(f"{connection_info['ip']}: 연결 실패")
                 continue
             formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y")
-            connection.send_command_timing(formatted_time)
-            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
+            clock = connection.send_command_timing(formatted_time)
+            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}" + '\n' + clock)
 
             running_config = connection.send_command_timing('show running-config')
             print(f"{connection_info['ip']}: 명령어 입력 - show running-config")
@@ -133,9 +133,9 @@ def main():
             if connection is None:
                 print(f"{connection_info['ip']}: 연결 실패")
                 continue
-            formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y") # 수정필요
-            connection.send_command_timing(formatted_time)
-            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
+            formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y") # 확인 후 수정 필요
+            clock = connection.send_command_timing(formatted_time)
+            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}" + '\n' + clock)
 
             running_config = connection.send_command_timing('show running-config')
             print(f"{connection_info['ip']}: 명령어 입력 - show running-config")
@@ -181,9 +181,9 @@ def main():
             if connection is None:
                 print(f"{connection_info['ip']}: 연결 실패")
                 continue
-            formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y")
-            connection.send_command_timing(formatted_time)
-            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}")
+            formatted_time = current_time.strftime("clock set %H:%M:%S %b %d %Y")
+            clock = connection.send_command_timing(formatted_time)
+            print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}" + '\n' + clock)
 
             running_config = connection.send_command_timing('show running-config')
             print(f"{connection_info['ip']}: 명령어 입력 - show running-config")
