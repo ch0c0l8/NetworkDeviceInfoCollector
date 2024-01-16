@@ -1,7 +1,10 @@
 # diretory
-vendor/__pycache__/
 backup/
+build/
+dist/
 session_logs/
+vendor/__pycache__/
 
 # File
 device_info.xlsx
+NetworkDeviceInfoCollector.spec
