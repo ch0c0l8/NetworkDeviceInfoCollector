@@ -13,7 +13,6 @@ from vendor.cisco_ios import cisco_ios
 2. 월별 log 분석 후 로그인 성공 및 실패 횟수 파싱
  - 각 모델별 로그 명령어 및 로그 출력결과 필요
 3. 아루바 스위치
- - 아루바 스위치 "no page" 명령어 확인 필요
  - clock 관련 명령어 확인 필요
 """
 
@@ -133,8 +132,10 @@ def main():
             if connection is None:
                 print(f"{connection_info['ip']}: 연결 실패")
                 continue
-            formatted_time = current_time.strftime("clock %H:%M:%S %d %m %Y") # 확인 후 수정 필요
+            connection.send_command_timing('configure terminal')
+            formatted_time = current_time.strftime("clock set %H:%M:%S %m/%d/%Y") # 확인 후 수정 필요
             clock = connection.send_command_timing(formatted_time)
+            connection.send_command_timing('exit')
             print(f"{connection_info['ip']}: 명령어 입력 - {formatted_time}" + '\n' + clock)
 
             running_config = connection.send_command_timing('show running-config')

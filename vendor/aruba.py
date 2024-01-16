@@ -15,7 +15,7 @@ class aruba_switch:
             print(f"{self.deviceConnectionInfo['ip']}: 연결 실패 - {e}")
 
     def hostname(self, data):
-        hostname = re.search(r'System\s+Name\s+:\s+(.*)', data)
+        hostname = re.search(r'hostname\s+"(\S+)"', data)
         if hostname:
             return hostname.group(1)
         else:
@@ -56,7 +56,7 @@ class aruba_switch:
             return 
     
     def memory_usage(self, data):
-        memory_usage = re.search(r'Memory\s+-\s+Total\s+:\s+(.*)', data)
+        memory_usage = re.search(r'CPU\s+Util\s+\(%\)\s+:\s+\d+\s+Free\s+:\s+(.*)', data)
         if memory_usage:
             return memory_usage.group(1)
         else:

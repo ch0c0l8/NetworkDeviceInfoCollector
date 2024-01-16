@@ -17,7 +17,7 @@ class cisco_ios:
             print(f"{self.deviceConnectionInfo['ip']}: 연결 실패 - {e}")
 
     def hostname(self, data):
-        hostname = re.search(r'hostname\s+(\S+)', data)
+        hostname = re.search(r'hostname\s+"(\S+)"', data)
         if hostname:
             return hostname.group(1)
         else:
