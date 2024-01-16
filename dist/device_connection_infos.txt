@@ -1,3 +1,0 @@
-handreamnet,192.168.10.11,22,tester01,Test01!,Test01!
-aruba_os,192.168.10.11,22,tester01,Test01!,Test01!
-cisco_ios,192.168.10.11,22,tester01,Test01!,Test01!
