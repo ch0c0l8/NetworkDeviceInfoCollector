@@ -1,4 +1,5 @@
 # diretory
+__pycache__/
 backup/
 build/
 dist/
